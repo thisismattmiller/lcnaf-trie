@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LCNAF Trie Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.dark-mode {
+            background: #0d0d0d;
+            color: #e8e8e8;
+        }
+
+        .header {
+            padding: 20px 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-text h1 {
+            font-size: 1.5em;
+            color: #1a1a1a;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .header-text h1 {
+            color: #f5f5f5;
+        }
+
+        .header-text p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        body.dark-mode .header-text p {
+            color: #888;
+        }
+
+        .night-mode-toggle {
+            background: none;
+            border: 1px solid #d0d0d0;
+            color: #666;
+            font-size: 0.9em;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .night-mode-toggle:hover {
+            background: #f5f5f5;
+            border-color: #999;
+        }
+
+        body.dark-mode .night-mode-toggle {
+            border-color: #4a4a4a;
+            color: #b0b0b0;
+        }
+
+        body.dark-mode .night-mode-toggle:hover {
+            background: #2a2a2a;
+            border-color: #666;
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 30px;
+        }
+
+        .status {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            transition: opacity 0.5s ease-out, max-height 0.5s ease-out, margin 0.5s ease-out, padding 0.5s ease-out;
+            max-height: 200px;
+            overflow: hidden;
+        }
+
+        .status.fade-out {
+            opacity: 0;
+            max-height: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .status.loading {
+            background: #fff8e1;
+            color: #f57c00;
+            border: 1px solid #ffe082;
+        }
+
+        body.dark-mode .status.loading {
+            background: #1a1a1a;
+            color: #ffa500;
+            border: 1px solid #404040;
+        }
+
+        .status.ready {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        body.dark-mode .status.ready {
+            background: #0d2b0d;
+            color: #5eb3ff;
+            border: 1px solid #1a4d1a;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        body.dark-mode .status.error {
+            background: #2b0d0d;
+            color: #ff6b6b;
+            border: 1px solid #4d1a1a;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        body.dark-mode .progress-container {
+            background: #2a2a2a;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #2e7d32;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        body.dark-mode .progress-bar {
+            background: #4a9eff;
+        }
+
+        .progress-text {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        body.dark-mode .progress-text {
+            color: #888;
+        }
+
+        .main-search {
+            margin-bottom: 10px;
+        }
+
+        .main-search label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        body.dark-mode .main-search label {
+            color: #b0b0b0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 1.1em;
+            color: #1a1a1a;
+            transition: border-color 0.2s;
+        }
+
+        body.dark-mode input[type="text"] {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+            color: #f5f5f5;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #999;
+        }
+
+        body.dark-mode input[type="text"]:focus {
+            border-color: #606060;
+        }
+
+        .results {
+            margin-top: 20px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-mode .results {
+            background: #1a1a1a;
+            border: 1px solid #404040;
+        }
+
+        .results h3 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        body.dark-mode .results h3 {
+            color: #f5f5f5;
+        }
+
+        .result-item {
+            padding: 12px 15px;
+            background: #ffffff;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #999;
+        }
+
+        body.dark-mode .result-item {
+            background: #252525;
+            border-left: 3px solid #4a9eff;
+        }
+
+        .result-item a {
+            color: #1976d2;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.05em;
+        }
+
+        body.dark-mode .result-item a {
+            color: #5eb3ff;
+        }
+
+        .result-item a:hover {
+            text-decoration: underline;
+        }
+
+        .result-meta {
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        body.dark-mode .result-meta {
+            color: #999;
+        }
+
+        .no-results {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        body.dark-mode .no-results {
+            color: #999;
+        }
+
+        .other-search {
+            margin-top: 0px;
+        }
+
+        .other-search-toggle {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 0.9em;
+            cursor: pointer;
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark-mode .other-search-toggle {
+            color: #888;
+        }
+
+        .other-search-toggle:hover {
+            color: #1a1a1a;
+        }
+
+        body.dark-mode .other-search-toggle:hover {
+            color: #b0b0b0;
+        }
+
+        .other-search-content {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .other-search-content.visible {
+            display: block;
+        }
+
+        .search-section {
+            margin-bottom: 25px;
+        }
+
+        .search-section h3 {
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        body.dark-mode .search-section h3 {
+            color: #b0b0b0;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .search-box input {
+            font-size: 0.95em;
+            padding: 10px 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            color: #1a1a1a;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        body.dark-mode button {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border: 1px solid #505050;
+        }
+
+        button:hover {
+            background: #d0d0d0;
+        }
+
+        body.dark-mode button:hover {
+            background: #3a3a3a;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,165,0,.3);
+            border-radius: 50%;
+            border-top-color: #f57c00;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        body.dark-mode .spinner {
+            border: 2px solid rgba(255,165,0,.3);
+            border-top-color: #ffa500;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .arrow {
+            transition: transform 0.2s;
+        }
+
+        .arrow.rotated {
+            transform: rotate(180deg);
+        }
+
+        .show-alternatives {
+            color: #1976d2;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.85em;
+            margin-left: 8px;
+        }
+
+        body.dark-mode .show-alternatives {
+            color: #5eb3ff;
+        }
+
+        .show-alternatives:hover {
+            text-decoration: underline;
+        }
+
+        .alternative-matches {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            border-left: 3px solid #999;
+            display: none;
+        }
+
+        body.dark-mode .alternative-matches {
+            background: #1a1a1a;
+            border-left: 3px solid #4a9eff;
+        }
+
+        .alternative-matches.visible {
+            display: block;
+        }
+
+        .alternative-matches h4 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: #666;
+        }
+
+        body.dark-mode .alternative-matches h4 {
+            color: #b0b0b0;
+        }
+
+        .alternative-item {
+            padding: 6px 0;
+            font-size: 0.9em;
+        }
+
+        /* MARC Processor Styles */
+        .marc-processor {
+            margin-top: 0px;
+            padding-top: 40px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        body.dark-mode .marc-processor {
+            border-top: 1px solid #404040;
+        }
+
+        .marc-processor h2 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        body.dark-mode .marc-processor h2 {
+            color: #f5f5f5;
+        }
+
+        .marc-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        body.dark-mode .marc-description {
+            color: #999;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d0d0d0;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .file-upload-area {
+            border-color: #404040;
+        }
+
+        .file-upload-area:hover {
+            border-color: #999;
+            background: #f9f9f9;
+        }
+
+        body.dark-mode .file-upload-area:hover {
+            border-color: #606060;
+            background: #1a1a1a;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        body.dark-mode .file-upload-area.drag-over {
+            border-color: #5eb3ff;
+            background: #1a2a3a;
+        }
+
+        .upload-prompt svg {
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .upload-prompt p {
+            font-size: 1.05em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        body.dark-mode .upload-prompt p {
+            color: #999;
+        }
+
+        .browse-link {
+            color: #1976d2;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        body.dark-mode .browse-link {
+            color: #5eb3ff;
+        }
+
+        .file-types {
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .example-files {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .example-heading {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        body.dark-mode .example-heading {
+            color: #999;
+        }
+
+        .example-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .example-link {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            color: #1976d2;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-link:hover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+
+        body.dark-mode .example-link {
+            background: #2a2a2a;
+            color: #5eb3ff;
+            border-color: #404040;
+        }
+
+        body.dark-mode .example-link:hover {
+            background: #1a2a3a;
+            border-color: #5eb3ff;
+        }
+
+        .marc-progress {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-mode .marc-progress {
+            background: #1a1a1a;
+            border-color: #404040;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .marc-report {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-mode .marc-report {
+            background: #1a1a1a;
+            border-color: #404040;
+        }
+
+        .marc-report h3 {
+            color: #1a1a1a;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .marc-report h3 {
+            color: #f5f5f5;
+        }
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: #ffffff;
+            border-radius: 6px;
+            border-left: 3px solid #999;
+        }
+
+        body.dark-mode .summary-item {
+            background: #252525;
+        }
+
+        .summary-item.success {
+            border-left-color: #4caf50;
+        }
+
+        .summary-item.warning {
+            border-left-color: #ff9800;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        body.dark-mode .summary-label {
+            color: #999;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            color: #1a1a1a;
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-btn.primary {
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
+        }
+
+        .action-btn.primary:hover {
+            background: #1565c0;
+        }
+
+        body.dark-mode .action-btn {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #505050;
+        }
+
+        body.dark-mode .action-btn:hover {
+            background: #3a3a3a;
+        }
+
+        body.dark-mode .action-btn.primary {
+            background: #1976d2;
+            border-color: #1976d2;
+        }
+
+        body.dark-mode .action-btn.primary:hover {
+            background: #1565c0;
+        }
+
+        .report-details {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        body.dark-mode .report-details {
+            background: #252525;
+        }
+
+        .detail-item {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        body.dark-mode .detail-item {
+            border-bottom-color: #3a3a3a;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .detail-status.updated {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        body.dark-mode .detail-status.updated {
+            background: #1a2a1a;
+            color: #4caf50;
+        }
+
+        .detail-status.not_found {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        body.dark-mode .detail-status.not_found {
+            background: #2a2010;
+            color: #ff9800;
+        }
+
+        .detail-status.poor_match {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        body.dark-mode .detail-status.poor_match {
+            background: #2a2010;
+            color: #ff9800;
+        }
+    </style>
+  <script type="module" crossorigin src="./assets/index-CTjaee8x.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div class="header-text">
+            <h1>LCNAF Trie Lookup</h1>
+            <p></p>
+        </div>
+        <button class="night-mode-toggle" id="nightModeToggle">☾ Night Mode</button>
+    </div>
+
+    <div class="search-container">
+        <div id="status" class="status loading">
+            <span class="spinner"></span> <span id="statusText">Loading trie data...</span>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText"></div>
+        </div>
+
+        <div id="mainSearchSection" style="display: none;">
+            <div class="main-search">
+                <label for="mainSearch">Search</label>
+                <input type="text" autofocus id="mainSearch" placeholder="Enter a authorized name heading to search..." autocomplete="off">
+            </div>
+            <div id="mainResults" class="results" style="display: none;"></div>
+
+            <div id="otherSearchSection" class="other-search" style="display: none;">
+                <button class="other-search-toggle" id="otherSearchToggle">
+                    <span class="arrow">▼</span>
+                    <span>Other Search Methods</span>
+                </button>
+                <div class="other-search-content" id="otherSearchContent">
+                    <span>These tools search the Trie data structure in different ways. Useful only for debugging.</span>
+                    <div class="search-section">
+                        <h3>Lookup Key</h3>
+                        <div class="search-box">
+                            <input type="text" id="lookupInput" placeholder="Enter a key to lookup...">
+                            <button id="lookupBtn">Lookup</button>
+                        </div>
+                        <div id="lookupResults" class="results" style="display: none;"></div>
+                    </div>
+
+                    <div class="search-section">
+                        <h3>Reverse Lookup (by ID)</h3>
+                        <div class="search-box">
+                            <input type="text" id="reverseInput" placeholder="Enter an ID number...">
+                            <button id="reverseBtn">Get Key</button>
+                        </div>
+                        <div id="reverseResults" class="results" style="display: none;"></div>
+                    </div>
+
+                    <div class="search-section">
+                        <h3>Predictive Search</h3>
+                        <div class="search-box">
+                            <input type="text" id="predictInput" placeholder="Start typing...">
+                            <button id="predictBtn">Search</button>
+                        </div>
+                        <div id="predictResults" class="results" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="marcProcessorSection" class="marc-processor" style="display: none;">
+            <h2>In Browser MARC Reconciler - Data does not leave your computer</h2>
+            <p class="marc-description">Upload a MARC21 Binary (.mrc) or MARCXML (.xml) file to automatically subfield zero ($0) id.loc.gov LCNAF URIs to name fields (100, 110, 700, 710).</p>
+
+            <div class="file-upload-area" id="fileUploadArea">
+                <input type="file" id="marcFileInput" accept=".mrc,.marc,.xml" style="display: none;">
+                <div class="upload-prompt">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    <p>Drop MARC file here or <span class="browse-link">browse</span></p>
+                    <p class="file-types">Supports .mrc, .marc, .xml files</p>
+                </div>
+            </div>
+
+            <div class="example-files">
+                <p class="example-heading">Don't have a MARC file? Use one of these:</p>
+                <div class="example-links">
+                    <button class="example-link" data-file="../marc_test_files/test_binary_single.mrc">Binary - Single Record</button>
+                    <button class="example-link" data-file="../marc_test_files/test_binary_multiple.mrc">Binary - 10,000 Records</button>
+                    <button class="example-link" data-file="../marc_test_files/test_xml_single.xml">XML - Single Record</button>
+                    <button class="example-link" data-file="../marc_test_files/test_xml_multiple.xml">XML - 10,000 Records</button>
+                </div>
+            </div>
+
+            <div id="marcProgress" class="marc-progress" style="display: none;">
+                <div class="progress-info">
+                    <span id="marcProgressText">Processing...</span>
+                    <span id="marcProgressPercent">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="marcProgressBar"></div>
+                </div>
+            </div>
+
+            <div id="marcReport" class="marc-report" style="display: none;">
+                <h3>Processing Complete</h3>
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Records:</span>
+                        <span class="summary-value" id="reportTotalRecords">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fields Processed:</span>
+                        <span class="summary-value" id="reportFieldsProcessed">0</span>
+                    </div>
+                    <div class="summary-item success">
+                        <span class="summary-label">Fields Updated:</span>
+                        <span class="summary-value" id="reportFieldsUpdated">0</span>
+                    </div>
+                    <div class="summary-item warning">
+                        <span class="summary-label">Not Found:</span>
+                        <span class="summary-value" id="reportFieldsNotFound">0</span>
+                    </div>
+                    <div class="summary-item warning">
+                        <span class="summary-label">Poor Match:</span>
+                        <span class="summary-value" id="reportFieldsPoorMatch">0</span>
+                    </div>
+                </div>
+
+                <div class="report-actions">
+                    <button id="downloadMarcBtn" class="action-btn primary">Download Enhanced MARC File</button>
+                    <button id="downloadReportBtn" class="action-btn">Download Report (JSON)</button>
+                    <button id="toggleDetailsBtn" class="action-btn">Show Details</button>
+                </div>
+
+                <div id="reportDetails" class="report-details" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

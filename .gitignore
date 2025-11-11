@@ -13,7 +13,7 @@ node_modules
 .Python
 build/
 develop-eggs/
-dist/
+
 downloads/
 eggs/
 .eggs/
