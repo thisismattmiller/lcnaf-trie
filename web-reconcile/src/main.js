@@ -142,7 +142,9 @@ async function loadTrie() {
 
     // Load the marisa.js script which defines MarisaModule globally
     const script = document.createElement('script');
-    script.src = '/marisa.js';
+    // Use relative path based on current page location
+    const basePath = import.meta.env.BASE_URL || './';
+    script.src = `${basePath}marisa.js`;
     script.type = 'text/javascript';
 
     await new Promise((resolve, reject) => {
@@ -162,7 +164,7 @@ async function loadTrie() {
     Module = await window.MarisaModule();
     setStatus('Downloading trie data (52 MB)...', 'loading', 20);
 
-    const response = await fetch('/trie.marisa.bin');
+    const response = await fetch(`${basePath}trie.marisa.bin`);
     if (!response.ok) {
       throw new Error('Failed to fetch trie.marisa.bin');
     }

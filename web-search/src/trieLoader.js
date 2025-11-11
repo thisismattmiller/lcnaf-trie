@@ -15,7 +15,9 @@ export class TrieLoader {
 
             // Load the marisa.js script dynamically
             const script = document.createElement('script');
-            script.src = '/marisa.js';
+            // Use relative path based on current page location
+            const basePath = import.meta.env.BASE_URL || './';
+            script.src = `${basePath}marisa.js`;
 
             await new Promise((resolve, reject) => {
                 script.onload = resolve;
@@ -29,7 +31,7 @@ export class TrieLoader {
 
             // Load and decompress trie
             onProgress('trie', 20, 'Downloading trie structure...');
-            const trieResponse = await fetch('/trie_unnormalized.marisa.bin');
+            const trieResponse = await fetch(`${basePath}trie_unnormalized.marisa.bin`);
             const trieTotal = parseInt(trieResponse.headers.get('content-length') || '0');
 
             const trieReader = trieResponse.body.getReader();
@@ -75,7 +77,7 @@ export class TrieLoader {
 
             // Load and decompress lookup data
             onProgress('lookup', 0, 'Downloading lookup data...');
-            const lookupResponse = await fetch('/trie_lookup_unnormalized.msgpack.bin');
+            const lookupResponse = await fetch(`${basePath}trie_lookup_unnormalized.msgpack.bin`);
             const lookupTotal = parseInt(lookupResponse.headers.get('content-length') || '0');
 
             const lookupReader = lookupResponse.body.getReader();

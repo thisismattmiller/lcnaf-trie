@@ -38,7 +38,8 @@ export class LookupDecoder {
 export async function loadLookupData(progressCallback = null) {
   console.log('Loading compressed lookup data (52 MB download)...');
 
-  const response = await fetch('/trie_lookup.msgpack.bin');
+  const basePath = import.meta.env.BASE_URL || './';
+  const response = await fetch(`${basePath}trie_lookup.msgpack.bin`);
 
   if (!response.ok) {
     throw new Error('Failed to fetch lookup data file');
