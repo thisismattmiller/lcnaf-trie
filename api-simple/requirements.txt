@@ -1,0 +1,4 @@
+Flask==3.0.0
+flask-cors==4.0.0
+marisa-trie==1.2.0
+msgpack==1.0.7

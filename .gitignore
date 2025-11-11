@@ -4,9 +4,10 @@ __pycache__/
 *$py.class
 
 
-
+node_modules
 # C extensions
 *.so
+.DS_Store
 
 # Distribution / packaging
 .Python
@@ -139,6 +140,7 @@ venv.bak/
 
 # mkdocs documentation
 /site
+.vite/
 
 # mypy
 .mypy_cache/

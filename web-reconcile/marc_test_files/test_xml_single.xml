@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:collection xmlns:ns0="http://www.loc.gov/MARC21/slim" xmlns="http://www.loc.gov/MARC21/slim" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd">
+  <ns0:record>
+    <ns0:leader>01159cam a2200313 a 4500</ns0:leader>
+    <ns0:controlfield tag="001">   00052724 </ns0:controlfield>
+    <ns0:controlfield tag="003">DLC</ns0:controlfield>
+    <ns0:controlfield tag="005">20041229192000.0</ns0:controlfield>
+    <ns0:controlfield tag="008">001025s2001    nyu           000 1 eng  </ns0:controlfield>
+    <ns0:datafield tag="010" ind1=" " ind2=" ">
+      <ns0:subfield code="a">   00052724 </ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="020" ind1=" " ind2=" ">
+      <ns0:subfield code="a">0375757279</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="040" ind1=" " ind2=" ">
+      <ns0:subfield code="a">DLC</ns0:subfield>
+      <ns0:subfield code="c">DLC</ns0:subfield>
+      <ns0:subfield code="d">DLC</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="043" ind1=" " ind2=" ">
+      <ns0:subfield code="a">f-sa---</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="050" ind1="0" ind2="0">
+      <ns0:subfield code="a">PR6045.O72</ns0:subfield>
+      <ns0:subfield code="b">V68 2001</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="082" ind1="0" ind2="0">
+      <ns0:subfield code="a">823/.912</ns0:subfield>
+      <ns0:subfield code="2">21</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="100" ind1="1" ind2=" ">
+      <ns0:subfield code="a">Woolf, Virginia,</ns0:subfield>
+      <ns0:subfield code="d">1882-1941.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="245" ind1="1" ind2="4">
+      <ns0:subfield code="a">The voyage out /</ns0:subfield>
+      <ns0:subfield code="c">Virginia Woolf ; introduction by Michael Cunningham ; notes by Deborah Lutz.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="250" ind1=" " ind2=" ">
+      <ns0:subfield code="a">Modern Library pbk. ed.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="260" ind1=" " ind2=" ">
+      <ns0:subfield code="a">New York :</ns0:subfield>
+      <ns0:subfield code="b">Modern Library,</ns0:subfield>
+      <ns0:subfield code="c">2001.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="300" ind1=" " ind2=" ">
+      <ns0:subfield code="a">402 p. ;</ns0:subfield>
+      <ns0:subfield code="c">21 cm.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="650" ind1=" " ind2="0">
+      <ns0:subfield code="a">British</ns0:subfield>
+      <ns0:subfield code="z">South America</ns0:subfield>
+      <ns0:subfield code="v">Fiction.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="650" ind1=" " ind2="0">
+      <ns0:subfield code="a">Man-woman relationships</ns0:subfield>
+      <ns0:subfield code="v">Fiction.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="650" ind1=" " ind2="0">
+      <ns0:subfield code="a">Women travelers</ns0:subfield>
+      <ns0:subfield code="v">Fiction.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="650" ind1=" " ind2="0">
+      <ns0:subfield code="a">Ocean travel</ns0:subfield>
+      <ns0:subfield code="v">Fiction.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="650" ind1=" " ind2="0">
+      <ns0:subfield code="a">Young women</ns0:subfield>
+      <ns0:subfield code="v">Fiction.</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="655" ind1=" " ind2="7">
+      <ns0:subfield code="a">Bildungsromans.</ns0:subfield>
+      <ns0:subfield code="2">gsafd</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="856" ind1="4" ind2="2">
+      <ns0:subfield code="3">Contributor biographical information</ns0:subfield>
+      <ns0:subfield code="u">http://www.loc.gov/catdir/bios/random052/00052724.html</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="856" ind1="4" ind2="1">
+      <ns0:subfield code="3">Sample text</ns0:subfield>
+      <ns0:subfield code="u">http://www.loc.gov/catdir/samples/random042/00052724.html</ns0:subfield>
+    </ns0:datafield>
+    <ns0:datafield tag="856" ind1="4" ind2="2">
+      <ns0:subfield code="3">Publisher description</ns0:subfield>
+      <ns0:subfield code="u">http://www.loc.gov/catdir/description/random045/00052724.html</ns0:subfield>
+    </ns0:datafield>
+  </ns0:record>
+</ns0:collection>
