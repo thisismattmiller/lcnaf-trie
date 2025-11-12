@@ -2,6 +2,10 @@
 
 A collection of tools for reconciling Library of Congress Name Authority File (LCNAF) names using MARISA trie data structures for fast, memory-efficient lookups.
 
+Blog post: https://thisismattmiller.com/post/lcnaf-trie/
+
+View Apps: https://thisismattmiller.github.io/lcnaf-trie/
+
 ## Project Overview
 
 This project provides multiple interfaces for reconciling names against LCNAF:
