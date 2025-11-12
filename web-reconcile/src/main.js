@@ -6,6 +6,7 @@ let trie = null;
 let Module = null;
 let MarisaModule = null;
 let lookupDecoder = null;
+let isEmbeddedMode = false;
 
 // LCCN prefix mapping
 const LCCN_PREFIX_MAP = {
@@ -501,6 +502,33 @@ mainSearchInput.addEventListener('keypress', (e) => {
   }
 });
 
+// Sample headings for random search
+const sampleHeadings = [
+  'Ovid, 43 B.C.-17 A.D. or 18 A.D.',
+  'Dante Alighieri, 1265-1321.',
+  'Chaucer, Geoffrey, -1400.',
+  'Goethe, Johann Wolfgang von, 1749-1832.',
+  'Austen, Jane, 1775-1817.',
+  'Hugo, Victor, 1802-1885.',
+  'Poe, Edgar Allan, 1809-1849.',
+  'Dickens, Charles, 1812-1870.',
+  'Dostoyevsky, Fyodor, 1821-1881',
+  'Borkan, R.E.',
+  'Wylie, Ian',
+  'Lewis, Roland',
+  'Sato, Aki-Hiro',
+  'Noël, Indra'
+];
+
+// Random heading link event listener
+document.getElementById('randomHeadingLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  const randomHeading = sampleHeadings[Math.floor(Math.random() * sampleHeadings.length)];
+  mainSearchInput.value = randomHeading;
+  clearTimeout(searchTimeout);
+  performMainSearch();
+});
+
 // Other search methods event listeners
 document.getElementById('lookupBtn').addEventListener('click', lookupKey);
 document.getElementById('lookupInput').addEventListener('keypress', (e) => {
@@ -709,9 +737,36 @@ function renderReportDetails() {
   detailsEl.innerHTML = html;
 }
 
-// Load trie on page load
-loadTrie().then(() => {
-  // Show MARC processor section after trie is loaded
-  document.getElementById('marcProcessorSection').style.display = 'block';
-  document.getElementById('otherSearchSection').style.display = 'block';
-});
+// Check if in embedded mode
+function checkEmbeddedMode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.has('embedded');
+}
+
+// Initialize the tool
+function initializeTool() {
+  loadTrie().then(() => {
+    // Show MARC processor section after trie is loaded
+    document.getElementById('marcProcessorSection').style.display = 'block';
+    document.getElementById('otherSearchSection').style.display = 'block';
+  });
+}
+
+// Handle embedded mode
+isEmbeddedMode = checkEmbeddedMode();
+
+if (isEmbeddedMode) {
+  // Show modal and wait for user to click load button
+  const modal = document.getElementById('embeddedModal');
+  const loadButton = document.getElementById('loadToolButton');
+
+  modal.classList.add('visible');
+
+  loadButton.addEventListener('click', () => {
+    modal.classList.remove('visible');
+    initializeTool();
+  });
+} else {
+  // Normal mode - load immediately
+  initializeTool();
+}

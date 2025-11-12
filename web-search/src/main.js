@@ -16,9 +16,16 @@ const searchStats = document.getElementById('searchStats');
 // Initialize
 const loader = new TrieLoader();
 let isLoading = false;
+let isEmbeddedMode = false;
 
-// Load trie on page load
-window.addEventListener('DOMContentLoaded', async () => {
+// Check if in embedded mode
+function checkEmbeddedMode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.has('embedded');
+}
+
+// Initialize the tool
+async function initializeTool() {
     try {
         const stats = await loader.loadWithProgress((type, percent, message) => {
             if (type === 'trie') {
@@ -45,6 +52,27 @@ window.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error('Failed to load:', error);
         showError('Failed to load the database. Please refresh the page.');
+    }
+}
+
+// Load trie on page load
+window.addEventListener('DOMContentLoaded', () => {
+    isEmbeddedMode = checkEmbeddedMode();
+
+    if (isEmbeddedMode) {
+        // Show modal and wait for user to click load button
+        const modal = document.getElementById('embeddedModal');
+        const loadButton = document.getElementById('loadToolButton');
+
+        modal.classList.add('visible');
+
+        loadButton.addEventListener('click', () => {
+            modal.classList.remove('visible');
+            initializeTool();
+        });
+    } else {
+        // Normal mode - load immediately
+        initializeTool();
     }
 });
 
