@@ -299,7 +299,7 @@ def process_marc_file(input_path):
         stats['total_records'] += 1
 
         # Get system ID from 001
-        system_id = record['001'].value() if record['001'] else 'NO_ID'
+        system_id = record['001'].value() if record.get('001') else 'NO_ID'
 
         # Process name fields
         for field_tag in FIELDS_TO_PROCESS:
